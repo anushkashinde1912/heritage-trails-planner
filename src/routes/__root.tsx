@@ -11,6 +11,12 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { ChatWidget } from "@/components/ChatWidget";
+import { Navbar } from "@/components/Navbar";
+import { LanguageProvider } from "@/data/i18n";
+import { ChatProvider } from "@/lib/chat-store";
+import { ItineraryProvider } from "@/lib/itinerary-store";
+
 
 function NotFoundComponent() {
   return (
