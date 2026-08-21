@@ -67,7 +67,9 @@ export default function MapCanvas({
       attributionControl={false}
       style={{ height: "100%", width: "100%" }}
     >
+      <ZoomControl position="bottomleft" />
       <FlyTo site={focused} />
+
       <GeoJSON
         data={activeState.geoJson as GeoJsonObject}
         style={(feature) => {
