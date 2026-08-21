@@ -38,10 +38,32 @@ export const categoryLabels: Record<SiteCategory, string> = {
   nature: "Nature",
 };
 
-const img = (q: string, s = 1) =>
-  `https://images.unsplash.com/${q}?auto=format&fit=crop&w=1200&q=70&sat=${s}`;
+import catFort from "@/assets/cat-fort.jpg";
+import catTemple from "@/assets/cat-temple.jpg";
+import catCave from "@/assets/cat-cave.jpg";
+import catMuseum from "@/assets/cat-museum.jpg";
+import catFestival from "@/assets/cat-festival.jpg";
+import catCraft from "@/assets/cat-craft.jpg";
+import catNature from "@/assets/cat-nature.jpg";
 
-export const sites: Site[] = [
+/**
+ * Placeholder artwork per category. Swap a site's `images` array for real
+ * photography whenever it becomes available — nothing else needs to change.
+ */
+export const categoryImages: Record<SiteCategory, string> = {
+  fort: catFort,
+  temple: catTemple,
+  cave: catCave,
+  museum: catMuseum,
+  festival: catFestival,
+  craft: catCraft,
+  nature: catNature,
+};
+
+const img = (_q: string) => "";
+
+const rawSites: Site[] = [
+
   {
     id: "raigad-fort",
     name: "Raigad Fort",
