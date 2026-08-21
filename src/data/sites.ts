@@ -636,4 +636,10 @@ const rawSites: Site[] = [
   },
 ];
 
+export const sites: Site[] = rawSites.map((s) => ({
+  ...s,
+  images: [categoryImages[s.category]],
+}));
+
 export const getSiteById = (id: string) => sites.find((s) => s.id === id);
+
