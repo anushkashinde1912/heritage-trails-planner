@@ -57,6 +57,129 @@ function PlannerPage() {
   const [itinerary, setItinerary] = useState<Itinerary | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [dismissedAlerts, setDismissedAlerts] = useState<string[]>([]);
+
+  function getTimeOfDay(timeSlot: string): "morning" | "afternoon" | "evening" {
+    const lower = timeSlot.toLowerCase();
+    if (lower.includes("pm")) {
+      const match = lower.match(/(\d+):/);
+      if (match) {
+        const hour = parseInt(match[1], 10);
+        if (hour === 12 || hour < 4) {
+          return "afternoon";
+        }
+      }
+      return "evening";
+    }
+    return "morning";
+  }
+
+  const dayType = useMemo(() => {
+    const isWeekend = new Date().getDay() === 0 || new Date().getDay() === 6;
+    return isWeekend ? "weekend" : "weekday";
+  }, []);
+
+  const crowdAlert = useMemo(() => {
+    if (!itinerary) return null;
+
+    for (const day of itinerary.days) {
+      for (const stop of day.stops) {
+        if (!stop.siteId) continue;
+
+        const site = sites.find((s) => s.id === stop.siteId);
+        if (site && site.crowd_pattern) {
+          const timeOfDay = getTimeOfDay(stop.timeSlot);
+          const crowdLevel = site.crowd_pattern[dayType][timeOfDay];
+
+          if (crowdLevel === "high") {
+            const altId = site.nearby_alternatives.find((altId) =>
+              sites.some((s) => s.id === altId),
+            );
+            if (altId) {
+              const altSite = sites.find((s) => s.id === altId);
+              if (altSite) {
+                const alertKey = `${day.day}-${site.id}-${altSite.id}`;
+                if (!dismissedAlerts.includes(alertKey)) {
+                  return {
+                    key: alertKey,
+                    day: day.day,
+                    stop,
+                    site,
+                    altSite,
+                  };
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    return null;
+  }, [itinerary, dayType, dismissedAlerts]);
+
+  const dismissAlert = (key: string) => {
+    setDismissedAlerts((prev) => [...prev, key]);
+  };
+
+  const handleSwap = (dayNum: number, originalStopSiteId: string, altSite: Site) => {
+    if (!itinerary) return;
+
+    const updatedDays = itinerary.days.map((day) => {
+      if (day.day !== dayNum) return day;
+
+      const altStopIndex = day.stops.findIndex((s) => s.siteId === altSite.id);
+      const origStopIndex = day.stops.findIndex((s) => s.siteId === originalStopSiteId);
+
+      if (origStopIndex === -1) return day;
+
+      let newStops = [...day.stops];
+
+      if (altStopIndex !== -1) {
+        const origStop = day.stops[origStopIndex];
+        const altStop = day.stops[altStopIndex];
+
+        const firstIdx = Math.min(origStopIndex, altStopIndex);
+        const secondIdx = Math.max(origStopIndex, altStopIndex);
+
+        newStops[firstIdx] = {
+          ...altStop,
+          timeSlot: day.stops[firstIdx].timeSlot,
+        };
+        newStops[secondIdx] = {
+          ...origStop,
+          timeSlot: day.stops[secondIdx].timeSlot,
+        };
+      } else {
+        const origStop = day.stops[origStopIndex];
+
+        const altStop = {
+          siteId: altSite.id,
+          name: altSite.name,
+          timeSlot: origStop.timeSlot,
+          durationHours: altSite.avgVisitDurationHours,
+          blurb: `Visited first to avoid crowd peaks at ${origStop.name}. Discover its historical value.`,
+          tip: "A quieter and more comfortable experience during peak hours.",
+        };
+
+        const updatedOrigStop = {
+          ...origStop,
+          timeSlot: "02:30 PM - 06:30 PM",
+        };
+
+        newStops.splice(origStopIndex, 1, altStop, updatedOrigStop);
+      }
+
+      return {
+        ...day,
+        stops: newStops,
+      };
+    });
+
+    setItinerary({
+      ...itinerary,
+      days: updatedDays,
+    });
+  };
 
   const selected = useMemo(
     () => selectedIds.map((id) => sites.find((s) => s.id === id)).filter(Boolean) as Site[],
@@ -321,6 +444,40 @@ function PlannerPage() {
                   </button>
                 </div>
               </div>
+
+              {crowdAlert && (
+                <div className="mt-4 flex flex-col gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-amber-900 shadow-soft">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex gap-2">
+                      <span className="mt-0.5 text-lg">⚠️</span>
+                      <div>
+                        <h4 className="font-bold text-sm">
+                          Crowd Alert: High Crowd Level Expected
+                        </h4>
+                        <p className="mt-1 text-xs text-amber-800">
+                          {crowdAlert.site.name} is expected to be very busy during the scheduled time slot (<strong>{crowdAlert.stop.timeSlot}</strong>) on Day {crowdAlert.day}.
+                          We recommend visiting <strong>{crowdAlert.altSite.name}</strong> instead to avoid the peak crowd.
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => dismissAlert(crowdAlert.key)}
+                      className="text-amber-500 hover:text-amber-700 text-xs font-bold px-1"
+                      aria-label="Dismiss Alert"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                  <div className="flex justify-end gap-2">
+                    <button
+                      onClick={() => handleSwap(crowdAlert.day, crowdAlert.site.id, crowdAlert.altSite)}
+                      className="rounded-xl bg-amber-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-amber-700 transition-colors shadow-soft"
+                    >
+                      Swap now
+                    </button>
+                  </div>
+                </div>
+              )}
 
               <div className="mt-6 space-y-6">
                 {itinerary.days.map((day) => (

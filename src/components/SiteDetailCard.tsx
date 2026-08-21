@@ -14,13 +14,14 @@ import {
   X,
 } from "lucide-react";
 import { useServerFn } from "@tanstack/react-start";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLang } from "@/data/i18n";
 import { categoryLabels, type Site } from "@/data/sites";
 import { narrateStory } from "@/lib/ai.functions";
 import { useChatPanel } from "@/lib/chat-store";
 import { useItinerary } from "@/lib/itinerary-store";
 import { cn } from "@/lib/utils";
+import { getCrowdLevel, findLeastCrowdedAlternative } from "@/lib/crowd";
 
 export function SiteDetailCard({ site, onClose }: { site: Site; onClose: () => void }) {
   const { t, lang, siteName } = useLang();
@@ -32,6 +33,16 @@ export function SiteDetailCard({ site, onClose }: { site: Site; onClose: () => v
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const inList = has(site.id);
+  const crowdLevel = getCrowdLevel(site);
+  const alternative = crowdLevel === "high" ? findLeastCrowdedAlternative(site) : null;
+
+  useEffect(() => {
+    return () => {
+      if (typeof window !== "undefined" && window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, []);
 
   const speak = (text: string) => {
     if (typeof window === "undefined" || !window.speechSynthesis) return;
@@ -107,6 +118,19 @@ export function SiteDetailCard({ site, onClose }: { site: Site; onClose: () => v
           </div>
         </div>
 
+        {/* crowd alert */}
+        {crowdLevel === "high" && alternative && (
+          <div className="mx-5 mt-4 rounded-2xl border border-destructive/40 bg-destructive/10 p-4 sm:mx-7">
+            <p className="flex items-center gap-2 text-sm font-semibold text-destructive">
+              <ShieldAlert className="size-4" />
+              {site.name} looks very crowded right now
+            </p>
+            <p className="mt-1 text-sm text-foreground/85">
+              Consider visiting <strong>{alternative.name}</strong> first and coming back later when it's quieter.
+            </p>
+          </div>
+        )}
+
         {/* body */}
         <div className="min-h-0 flex-1 space-y-6 overflow-y-auto p-5 sm:p-7">
           <p className="text-base leading-relaxed text-foreground/90">{site.shortDescription}</p>
@@ -117,6 +141,7 @@ export function SiteDetailCard({ site, onClose }: { site: Site; onClose: () => v
 
           <Section title={t("culturalSignificance")}>
             <p className="text-sm leading-relaxed text-foreground/85">{site.legendsText}</p>
+
             <div className="mt-3 rounded-2xl border border-accent/50 bg-accent/10 p-4">
               <div className="flex items-center justify-between gap-3">
                 <p className="flex items-center gap-2 font-display text-sm text-secondary">
@@ -230,7 +255,9 @@ export function SiteDetailCard({ site, onClose }: { site: Site; onClose: () => v
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section>
-      <h3 className="mb-2 font-display text-lg text-secondary">{title}</h3>
+      <h3 className="mb-2 font-display text-sm font-bold uppercase tracking-wide text-secondary">
+        {title}
+      </h3>
       {children}
     </section>
   );
@@ -246,12 +273,14 @@ function Info({
   value: string;
 }) {
   return (
-    <div className="rounded-2xl bg-muted/70 p-3.5">
-      <dt className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">
-        {icon}
-        {label}
-      </dt>
-      <dd className="mt-1 text-sm text-foreground/90">{value}</dd>
+    <div className="flex items-start gap-2.5">
+      <span className="mt-0.5 text-primary">{icon}</span>
+      <div>
+        <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          {label}
+        </dt>
+        <dd className="text-sm text-foreground/90">{value}</dd>
+      </div>
     </div>
   );
 }

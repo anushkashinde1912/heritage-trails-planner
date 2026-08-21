@@ -7,6 +7,13 @@ export type SiteCategory =
   | "craft"
   | "nature";
 
+export type CrowdLevel = "low" | "medium" | "high";
+
+export type CrowdPattern = {
+  weekday: { morning: CrowdLevel; afternoon: CrowdLevel; evening: CrowdLevel };
+  weekend: { morning: CrowdLevel; afternoon: CrowdLevel; evening: CrowdLevel };
+};
+
 export type Site = {
   id: string;
   name: string;
@@ -26,6 +33,8 @@ export type Site = {
   accessibility: { wheelchairAccess: "yes" | "no" | "partial"; notes: string };
   safety: { advisoryText: string; emergencyContact: string };
   avgVisitDurationHours: number;
+  crowd_pattern: CrowdPattern;
+  nearby_alternatives: string[];
 };
 
 export const categoryLabels: Record<SiteCategory, string> = {
@@ -38,29 +47,42 @@ export const categoryLabels: Record<SiteCategory, string> = {
   nature: "Nature",
 };
 
-import catFort from "@/assets/cat-fort.jpg";
-import catTemple from "@/assets/cat-temple.jpg";
-import catCave from "@/assets/cat-cave.jpg";
-import catMuseum from "@/assets/cat-museum.jpg";
-import catFestival from "@/assets/cat-festival.jpg";
-import catCraft from "@/assets/cat-craft.jpg";
-import catNature from "@/assets/cat-nature.jpg";
 
+import raigadCustom1 from "@/assets/raigad-1.jpeg";
+import ajantaCustom1 from "@/assets/ajantacaves-1.jpeg";
+import ellora1 from "@/assets/ellora1.jpeg";
+import shaniwar1 from "@/assets/shaniwarwada1.jpeg";
+import csmt1 from "@/assets/csmt1.jpeg";
+import elephanta1 from "@/assets/elephanta.jpeg";
+import kpmandir1 from "@/assets/kpmandir.jpeg";
+import sindhudurg1 from "@/assets/sindhudurg1.jpeg";
+import sinhgad1 from "@/assets/sinhgad1.jpeg";
+import pratapgad1 from "@/assets/pratapgad1.jpeg";
+import tbk from "@/assets/trimbakeshwar.jpeg";
+import dks from "@/assets/deekshbhoomi.jpeg";
+import aundha from "@/assets/aundha.jpeg";
+import bhaja from "@/assets/bhaja.jpeg";
+import bbk from "@/assets/bbk.jpeg";
+import wari from "@/assets/pandharpur.jpeg";
+import paithani from "@/assets/paithani.jpeg";
+import lonarlake from "@/assets/lonarlake.jpeg";
+import tadoba1 from "@/assets/tadoba1.jpeg";
+import tadoba2 from "@/assets/tadoba2.jpeg";
 /**
  * Placeholder artwork per category. Swap a site's `images` array for real
  * photography whenever it becomes available — nothing else needs to change.
  */
 export const categoryImages: Record<SiteCategory, string> = {
-  fort: catFort,
-  temple: catTemple,
-  cave: catCave,
-  museum: catMuseum,
-  festival: catFestival,
-  craft: catCraft,
-  nature: catNature,
+  fort: raigadCustom1,
+  temple: kpmandir1,
+  cave: ajantaCustom1,
+  museum: csmt1,
+  festival: wari,
+  craft: paithani,
+  nature: lonarlake,
 };
 
-const img = (_q: string) => "";
+const img = (id: string) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=800&q=80`;
 
 const rawSites: Site[] = [
 
@@ -78,7 +100,7 @@ const rawSites: Site[] = [
       "Rising 820 metres above the Sahyadri valleys, Raigad was chosen by Chhatrapati Shivaji Maharaj as his capital in 1674. The fort holds the ruins of the royal court, the Bazaar Peth, the Jagadishwar temple and the samadhi of Shivaji Maharaj. A ropeway now carries visitors up the sheer western face in four minutes.",
     legendsText:
       "The Takmak Tok cliff, from which the guilty were said to be flung, and the whispered acoustics of the Raj Sabha where the throne once stood, are the two stories every guide on Raigad still tells.",
-    images: [img("photo-1600100397608-f010cca24ce9"), img("photo-1548013146-72479768bada")],
+    images: [raigadCustom1],
     timings: "8:00 AM – 6:00 PM daily",
     entryFee: "₹25 per person; ropeway ₹400 return",
     bestTimeToVisit: "October to February",
@@ -92,6 +114,8 @@ const rawSites: Site[] = [
       emergencyContact: "Raigad district control room: 02141-222118",
     },
     avgVisitDurationHours: 4,
+    crowd_pattern: { weekday: { morning: "medium", afternoon: "medium", evening: "low" }, weekend: { morning: "high", afternoon: "high", evening: "medium" } },
+    nearby_alternatives: ["pratapgad-fort", "sinhagad-fort"],
   },
   {
     id: "ajanta-caves",
@@ -107,7 +131,7 @@ const rawSites: Site[] = [
       "Carved between the 2nd century BCE and 6th century CE, the Ajanta caves combine chaityas and viharas with murals of the Jataka tales. Rediscovered in 1819 by a British hunting party, the site is a UNESCO World Heritage monument and the reference point for classical Indian painting.",
     legendsText:
       "Cave 1's Padmapani bodhisattva, eyes lowered in compassion, is said to have been painted by artists who worked only by reflected sunlight bounced off polished metal sheets.",
-    images: [img("photo-1590766940554-634a7ed41450"), img("photo-1524492412937-b28074a5d7da")],
+    images: [ajantaCustom1],
     timings: "9:00 AM – 5:30 PM, closed Mondays",
     entryFee: "₹40 Indian nationals; ₹600 foreign nationals",
     bestTimeToVisit: "November to March",
@@ -121,6 +145,8 @@ const rawSites: Site[] = [
       emergencyContact: "Aurangabad tourist police: 0240-2331513",
     },
     avgVisitDurationHours: 4,
+    crowd_pattern: { weekday: { morning: "medium", afternoon: "high", evening: "medium" }, weekend: { morning: "high", afternoon: "high", evening: "high" } },
+    nearby_alternatives: ["ellora-caves", "bibi-ka-maqbara"],
   },
   {
     id: "ellora-caves",
@@ -136,7 +162,7 @@ const rawSites: Site[] = [
       "Ellora's basalt escarpment holds 34 excavations from the 6th to 11th centuries. Cave 16, the Kailasa temple, was cut downward out of a single rock, removing an estimated 200,000 tonnes of stone — the largest monolithic excavation on earth.",
     legendsText:
       "Local tradition holds that Kailasa was finished in a single lifetime after a queen vowed to fast until she could see the temple's shikhara.",
-    images: [img("photo-1609920658906-8223bd289001"), img("photo-1582510003544-4d00b7f74220")],
+    images: [ellora1],
     timings: "6:00 AM – 6:00 PM, closed Tuesdays",
     entryFee: "₹40 Indian nationals; ₹600 foreign nationals",
     bestTimeToVisit: "June to March",
@@ -150,6 +176,8 @@ const rawSites: Site[] = [
       emergencyContact: "Aurangabad tourist police: 0240-2331513",
     },
     avgVisitDurationHours: 4,
+    crowd_pattern: { weekday: { morning: "medium", afternoon: "high", evening: "medium" }, weekend: { morning: "high", afternoon: "high", evening: "high" } },
+    nearby_alternatives: ["ajanta-caves", "bibi-ka-maqbara"],
   },
   {
     id: "shaniwar-wada",
@@ -164,7 +192,7 @@ const rawSites: Site[] = [
       "Built in 1732 by Bajirao I, Shaniwar Wada was the political centre of the Maratha confederacy until 1818. A fire in 1828 consumed the wooden palace, leaving the granite base, the Delhi Darwaza and the lotus fountain foundations.",
     legendsText:
       "Pune folklore insists the cry of the young Peshwa Narayanrao — 'kaka mala vachva' — can still be heard within the walls on full-moon nights.",
-    images: [img("photo-1567157577867-05ccb1388e66"), img("photo-1587474260584-136574528ed5")],
+    images: [shaniwar1],
     timings: "8:00 AM – 6:30 PM; light & sound show 7:15 PM",
     entryFee: "₹25 Indian nationals; ₹300 foreign nationals",
     bestTimeToVisit: "August to February",
@@ -178,6 +206,8 @@ const rawSites: Site[] = [
       emergencyContact: "Pune police control: 020-26126296",
     },
     avgVisitDurationHours: 1.5,
+    crowd_pattern: { weekday: { morning: "low", afternoon: "medium", evening: "medium" }, weekend: { morning: "medium", afternoon: "high", evening: "high" } },
+    nearby_alternatives: ["sinhagad-fort"],
   },
   {
     id: "gateway-of-india",
@@ -206,6 +236,8 @@ const rawSites: Site[] = [
       emergencyContact: "Mumbai police: 100 / 022-22621855",
     },
     avgVisitDurationHours: 1,
+    crowd_pattern: { weekday: { morning: "medium", afternoon: "high", evening: "high" }, weekend: { morning: "high", afternoon: "high", evening: "high" } },
+    nearby_alternatives: ["cst-mumbai", "elephanta-caves"],
   },
   {
     id: "cst-mumbai",
@@ -223,7 +255,7 @@ const rawSites: Site[] = [
       "Completed in 1888 to F.W. Stevens' design, CSMT fuses Venetian Gothic with Mughal detail — gargoyles, peacock windows, and a stone dome crowned by 'Progress'. Over three million commuters pass through it each day.",
     legendsText:
       "The stone lion and tiger flanking the gates were carved to represent Britain and India; guides note the tiger looks distinctly unimpressed.",
-    images: [img("photo-1595658658481-d53d3f999875"), img("photo-1566552881560-0be862a7c445")],
+    images: [csmt1],
     timings: "Heritage gallery 3:00 PM – 5:00 PM, weekdays",
     entryFee: "₹200 heritage tour",
     bestTimeToVisit: "November to February",
@@ -237,6 +269,8 @@ const rawSites: Site[] = [
       emergencyContact: "Railway helpline: 139",
     },
     avgVisitDurationHours: 1.5,
+    crowd_pattern: { weekday: { morning: "high", afternoon: "high", evening: "high" }, weekend: { morning: "medium", afternoon: "medium", evening: "medium" } },
+    nearby_alternatives: ["gateway-of-india"],
   },
   {
     id: "elephanta-caves",
@@ -251,7 +285,7 @@ const rawSites: Site[] = [
       "An hour by ferry from the Gateway of India, Gharapuri island holds seven caves excavated between the 5th and 8th centuries. The 6-metre Trimurti panel — creator, preserver, destroyer — is among the greatest sculptures of the subcontinent.",
     legendsText:
       "The Portuguese named the island after a stone elephant on its shore; the elephant now stands in Mumbai's Bhau Daji Lad museum garden.",
-    images: [img("photo-1580060839134-75a5edca2e99"), img("photo-1561361058-c24cecae35ca")],
+    images: [elephanta1],
     timings: "9:00 AM – 5:30 PM, closed Mondays",
     entryFee: "₹40 Indian nationals; ₹600 foreign nationals; ferry ₹260 return",
     bestTimeToVisit: "November to March",
@@ -265,6 +299,8 @@ const rawSites: Site[] = [
       emergencyContact: "Coast guard: 1554",
     },
     avgVisitDurationHours: 4,
+    crowd_pattern: { weekday: { morning: "low", afternoon: "medium", evening: "low" }, weekend: { morning: "medium", afternoon: "high", evening: "medium" } },
+    nearby_alternatives: ["gateway-of-india"],
   },
   {
     id: "mahalaxmi-kolhapur",
@@ -279,7 +315,7 @@ const rawSites: Site[] = [
       "The Ambabai temple was built by the Chalukyas around 700 CE in black basalt with later Yadava and Maratha additions. It is one of the six Shakti Peethas where devotees may both worship and ask for the fulfilment of desire.",
     legendsText:
       "During Kiranotsav, on set days in January and November, the setting sun aligns with the west door and falls directly on the goddess's feet, then her torso, then her face.",
-    images: [img("photo-1621996346565-e3dbc353d2e5"), img("photo-1609619385002-f40f1df9b7eb")],
+    images: [kpmandir1],
     timings: "4:30 AM – 10:30 PM",
     entryFee: "Free; ₹100 for expedited darshan",
     bestTimeToVisit: "October to February; Navratri for the festival",
@@ -293,6 +329,8 @@ const rawSites: Site[] = [
       emergencyContact: "Kolhapur control room: 0231-2661333",
     },
     avgVisitDurationHours: 1.5,
+    crowd_pattern: { weekday: { morning: "high", afternoon: "medium", evening: "high" }, weekend: { morning: "high", afternoon: "high", evening: "high" } },
+    nearby_alternatives: ["sindhudurg-fort"],
   },
   {
     id: "sindhudurg-fort",
@@ -307,7 +345,7 @@ const rawSites: Site[] = [
       "Commissioned by Shivaji Maharaj in 1664, Sindhudurg covers 48 acres of tidal rock. Its curving ramparts were laid so that no cannon could get a straight shot, and it holds the only temple in India dedicated to Shivaji Maharaj himself.",
     legendsText:
       "Handprints and footprints of Shivaji Maharaj, pressed into wet lime at the gate, are still preserved under a small canopy.",
-    images: [img("photo-1616432043562-3671ea2e5242"), img("photo-1544986581-efac024faf62")],
+    images: [sindhudurg1],
     timings: "9:00 AM – 5:00 PM; boats subject to tide",
     entryFee: "₹50 boat fare; fort entry free",
     bestTimeToVisit: "November to May",
@@ -321,6 +359,8 @@ const rawSites: Site[] = [
       emergencyContact: "Sindhudurg control room: 02362-228847",
     },
     avgVisitDurationHours: 3,
+    crowd_pattern: { weekday: { morning: "low", afternoon: "medium", evening: "low" }, weekend: { morning: "medium", afternoon: "high", evening: "low" } },
+    nearby_alternatives: ["mahalaxmi-kolhapur"],
   },
   {
     id: "lonar-crater",
@@ -336,7 +376,7 @@ const rawSites: Site[] = [
       "The only hypervelocity impact crater in basaltic rock on earth, Lonar is 1.8 km wide and ringed by Chalukya-era temples. Its water chemistry is unique, and in 2020 the lake briefly turned pink as halophilic bacteria bloomed.",
     legendsText:
       "The Padma Purana names the crater as the spot where Vishnu, as Daityasudan, crushed the demon Lonasura into the earth.",
-    images: [img("photo-1470071459604-3b5ec3a7fe05"), img("photo-1441974231531-c6227db76b6e")],
+    images: [lonarlake],
     timings: "Sunrise to sunset",
     entryFee: "Free",
     bestTimeToVisit: "October to February",
@@ -350,6 +390,8 @@ const rawSites: Site[] = [
       emergencyContact: "Buldana control room: 07262-242222",
     },
     avgVisitDurationHours: 3,
+    crowd_pattern: { weekday: { morning: "low", afternoon: "low", evening: "low" }, weekend: { morning: "medium", afternoon: "medium", evening: "medium" } },
+    nearby_alternatives: ["ajanta-caves"],
   },
   {
     id: "trimbakeshwar",
@@ -364,7 +406,7 @@ const rawSites: Site[] = [
       "Rebuilt in black basalt by Peshwa Balaji Bajirao in the 1750s, Trimbakeshwar's lingam carries three faces — Brahma, Vishnu and Shiva. The Kushavarta kund in its courtyard is treated as the true origin of the Godavari.",
     legendsText:
       "Sage Gautama is said to have brought the Godavari down to this hillside to atone for the accidental death of a cow.",
-    images: [img("photo-1604608672516-f1b9b1a0a3a3"), img("photo-1602216056096-3b40cc0c9944")],
+    images: [tbk],
     timings: "5:30 AM – 9:00 PM",
     entryFee: "Free; ₹200 for the Rudrabhishek queue",
     bestTimeToVisit: "October to March; Kumbh Mela years draw millions",
@@ -378,6 +420,8 @@ const rawSites: Site[] = [
       emergencyContact: "Nashik rural control: 0253-2309100",
     },
     avgVisitDurationHours: 2,
+    crowd_pattern: { weekday: { morning: "high", afternoon: "medium", evening: "medium" }, weekend: { morning: "high", afternoon: "high", evening: "high" } },
+    nearby_alternatives: ["aundha-nagnath"],
   },
   {
     id: "sinhagad-fort",
@@ -392,7 +436,7 @@ const rawSites: Site[] = [
       "Perched at 1,312 metres on the Bhuleshwar range, Sinhagad guards the routes between Pune and the Konkan. Its Kalyan and Pune darwazas, Tanaji's memorial and the Dev Take cistern survive, and the ridge is a favourite sunrise trek.",
     legendsText:
       "Tanaji's monitor lizard Yashwanti is said to have carried the first rope up the Donagiri cliff; Shivaji's lament — 'the fort is won but the lion is gone' — gave the fort its name.",
-    images: [img("photo-1519681393784-d120267933ba"), img("photo-1464822759023-fed622ff2c3b")],
+    images: [sinhgad1],
     timings: "5:00 AM – 6:00 PM",
     entryFee: "Free; vehicle entry ₹50",
     bestTimeToVisit: "July to February",
@@ -406,6 +450,8 @@ const rawSites: Site[] = [
       emergencyContact: "Pune rural control: 020-26122880",
     },
     avgVisitDurationHours: 3,
+    crowd_pattern: { weekday: { morning: "medium", afternoon: "medium", evening: "low" }, weekend: { morning: "high", afternoon: "high", evening: "high" } },
+    nearby_alternatives: ["shaniwar-wada", "raigad-fort"],
   },
   {
     id: "bibi-ka-maqbara",
@@ -420,7 +466,7 @@ const rawSites: Site[] = [
       "Built in 1660 by Prince Azam Shah for Dilras Banu Begum, the tomb echoes the Taj Mahal at a smaller scale — marble on the lower storey, plastered basalt above, set in a charbagh garden with axial water channels.",
     legendsText:
       "The architect Ata-ullah is said to have been the son of the Taj Mahal's designer, working under a budget one-twentieth the size.",
-    images: [img("photo-1524492412937-b28074a5d7da"), img("photo-1548013146-72479768bada")],
+    images: [bbk],
     timings: "8:00 AM – 8:00 PM",
     entryFee: "₹25 Indian nationals; ₹300 foreign nationals",
     bestTimeToVisit: "October to March",
@@ -434,6 +480,8 @@ const rawSites: Site[] = [
       emergencyContact: "Aurangabad tourist police: 0240-2331513",
     },
     avgVisitDurationHours: 1.5,
+    crowd_pattern: { weekday: { morning: "low", afternoon: "medium", evening: "medium" }, weekend: { morning: "medium", afternoon: "high", evening: "high" } },
+    nearby_alternatives: ["ellora-caves", "ajanta-caves"],
   },
   {
     id: "deekshabhoomi",
@@ -449,7 +497,7 @@ const rawSites: Site[] = [
       "On 14 October 1956, Dr B.R. Ambedkar and around 400,000 followers took the Buddhist vows here. The domed stupa, completed in 2001 and modelled on Sanchi, is the largest hollow stupa in the world.",
     legendsText:
       "Every Dhamma Chakra Pravartan Din, lakhs of pilgrims walk the grounds barefoot, carrying blue flags — one of the largest peaceful gatherings in India.",
-    images: [img("photo-1582510003544-4d00b7f74220"), img("photo-1609920658906-8223bd289001")],
+    images: [dks],
     timings: "6:00 AM – 9:00 PM",
     entryFee: "Free",
     bestTimeToVisit: "October to February; Vijayadashami for the anniversary",
@@ -463,6 +511,8 @@ const rawSites: Site[] = [
       emergencyContact: "Nagpur police control: 0712-2561222",
     },
     avgVisitDurationHours: 1.5,
+    crowd_pattern: { weekday: { morning: "low", afternoon: "low", evening: "medium" }, weekend: { morning: "medium", afternoon: "medium", evening: "high" } },
+    nearby_alternatives: ["tadoba"],
   },
   {
     id: "paithani-yeola",
@@ -477,7 +527,7 @@ const rawSites: Site[] = [
       "Yeola's weaver quarters keep alive the Paithani sari, a tapestry technique from the Satavahana period. Motifs — peacock, lotus, parrot — are woven with pure gold or silver zari, entirely by hand, on pit looms.",
     legendsText:
       "Peshwa-era records describe Paithani as being traded weight-for-weight against gold in the ports of the Deccan.",
-    images: [img("photo-1610030469983-98e550d6193c"), img("photo-1595341888016-a392ef81b7de")],
+    images: [paithani],
     timings: "10:00 AM – 6:00 PM, workshops closed Sundays",
     entryFee: "Free to observe; saris from ₹8,000",
     bestTimeToVisit: "September to February",
@@ -491,6 +541,8 @@ const rawSites: Site[] = [
       emergencyContact: "Nashik rural control: 0253-2309100",
     },
     avgVisitDurationHours: 2,
+    crowd_pattern: { weekday: { morning: "low", afternoon: "medium", evening: "medium" }, weekend: { morning: "medium", afternoon: "medium", evening: "low" } },
+    nearby_alternatives: ["trimbakeshwar"],
   },
   {
     id: "pandharpur-wari",
@@ -506,7 +558,7 @@ const rawSites: Site[] = [
       "The Vitthal-Rukmini temple has drawn Varkari devotees since at least the 13th century. Each Ashadhi Ekadashi, palkhis carrying the sandals of Sant Dnyaneshwar and Sant Tukaram converge here after a 250-km walk with hundreds of thousands of pilgrims.",
     legendsText:
       "Vitthal is said to still be standing on the brick Pundalik placed for him, waiting patiently while a devoted son served his parents first.",
-    images: [img("photo-1609619385002-f40f1df9b7eb"), img("photo-1621996346565-e3dbc353d2e5")],
+    images: [wari],
     timings: "Temple 4:00 AM – 11:00 PM",
     entryFee: "Free",
     bestTimeToVisit: "Ashadhi Ekadashi (June/July) for the Wari; winter otherwise",
@@ -520,6 +572,8 @@ const rawSites: Site[] = [
       emergencyContact: "Solapur control room: 0217-2731000",
     },
     avgVisitDurationHours: 2.5,
+    crowd_pattern: { weekday: { morning: "medium", afternoon: "medium", evening: "medium" }, weekend: { morning: "high", afternoon: "high", evening: "high" } },
+    nearby_alternatives: ["mahalaxmi-kolhapur"],
   },
   {
     id: "pratapgad-fort",
@@ -534,7 +588,7 @@ const rawSites: Site[] = [
       "Completed in 1656 above the Par and Kinesvari valleys, Pratapgad has an upper and lower fort, a Bhavani temple endowed by Shivaji Maharaj, and bastions that fall away 250 metres to dense forest.",
     legendsText:
       "The meeting pavilion below the fort marks where the wagh nakh — tiger claws — turned an embrace into the decisive act of the Maratha rise.",
-    images: [img("photo-1600100397608-f010cca24ce9"), img("photo-1519681393784-d120267933ba")],
+    images: [pratapgad1],
     timings: "8:00 AM – 6:00 PM",
     entryFee: "Free",
     bestTimeToVisit: "September to February",
@@ -548,6 +602,8 @@ const rawSites: Site[] = [
       emergencyContact: "Satara control room: 02162-233833",
     },
     avgVisitDurationHours: 3,
+    crowd_pattern: { weekday: { morning: "low", afternoon: "medium", evening: "low" }, weekend: { morning: "medium", afternoon: "high", evening: "medium" } },
+    nearby_alternatives: ["raigad-fort"],
   },
   {
     id: "bhaja-karla-caves",
@@ -563,7 +619,7 @@ const rawSites: Site[] = [
       "Bhaja's 22 excavations include a barrel-vaulted chaitya with wooden ribs still in place, and a group of stupas commemorating resident monks. Karla, across the valley, holds India's largest early chaitya hall with a 15-metre lion pillar at its entrance.",
     legendsText:
       "The caves were funded by merchant guilds and even by individual traders whose names are still legible in Brahmi script above the doorways.",
-    images: [img("photo-1561361058-c24cecae35ca"), img("photo-1580060839134-75a5edca2e99")],
+    images: [bhaja],
     timings: "8:00 AM – 6:00 PM",
     entryFee: "₹25 Indian nationals; ₹300 foreign nationals",
     bestTimeToVisit: "July to February",
@@ -577,6 +633,8 @@ const rawSites: Site[] = [
       emergencyContact: "Pune rural control: 020-26122880",
     },
     avgVisitDurationHours: 3,
+    crowd_pattern: { weekday: { morning: "low", afternoon: "medium", evening: "low" }, weekend: { morning: "medium", afternoon: "high", evening: "medium" } },
+    nearby_alternatives: ["sinhagad-fort", "shaniwar-wada"],
   },
   {
     id: "aundha-nagnath",
@@ -591,7 +649,7 @@ const rawSites: Site[] = [
       "Rebuilt in the Yadava period on older foundations, Aundha Nagnath is counted among the twelve Jyotirlingas. Its plinth carries bands of dancers, elephants and epic scenes, and the sanctum sits below the courtyard level.",
     legendsText:
       "The Pandavas are said to have built the original shrine during their exile, which is why the temple faces an unusual direction.",
-    images: [img("photo-1602216056096-3b40cc0c9944"), img("photo-1604608672516-f1b9b1a0a3a3")],
+    images: [aundha],
     timings: "4:00 AM – 9:00 PM",
     entryFee: "Free",
     bestTimeToVisit: "November to February; Mahashivratri",
@@ -605,6 +663,8 @@ const rawSites: Site[] = [
       emergencyContact: "Hingoli control room: 02456-222333",
     },
     avgVisitDurationHours: 1.5,
+    crowd_pattern: { weekday: { morning: "medium", afternoon: "low", evening: "low" }, weekend: { morning: "high", afternoon: "medium", evening: "medium" } },
+    nearby_alternatives: ["trimbakeshwar"],
   },
   {
     id: "tadoba",
@@ -619,7 +679,7 @@ const rawSites: Site[] = [
       "Declared a national park in 1955, Tadoba's teak and bamboo forest supports one of India's densest tiger populations along with sloth bear, gaur and marsh crocodile. Jeep safaris run from six gates around the core zone.",
     legendsText:
       "Gond villagers name the forest after Taru, a headman said to have died fighting a tiger; his shrine stands beside Tadoba lake.",
-    images: [img("photo-1549366021-9f761d040a94"), img("photo-1470071459604-3b5ec3a7fe05")],
+    images: [tadoba1, tadoba2],
     timings: "Safari slots 6:00 AM & 3:00 PM; core zone closed Tuesdays",
     entryFee: "From ₹2,000 per jeep plus guide fee",
     bestTimeToVisit: "February to May for sightings",
@@ -633,13 +693,18 @@ const rawSites: Site[] = [
       emergencyContact: "Tadoba forest control: 07172-277116",
     },
     avgVisitDurationHours: 4,
+    crowd_pattern: { weekday: { morning: "medium", afternoon: "medium", evening: "medium" }, weekend: { morning: "high", afternoon: "high", evening: "high" } },
+    nearby_alternatives: ["deekshabhoomi"],
   },
 ];
 
-export const sites: Site[] = rawSites.map((s) => ({
-  ...s,
-  images: [categoryImages[s.category]],
-}));
+export const sites: Site[] = rawSites.map((s) => {
+  const validImages = s.images.filter((url) => url && url.trim() !== "");
+  return {
+    ...s,
+    images: validImages.length > 0 ? validImages : [categoryImages[s.category]],
+  };
+});
 
 export const getSiteById = (id: string) => sites.find((s) => s.id === id);
 
