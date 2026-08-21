@@ -1,6 +1,6 @@
 import L from "leaflet";
 import { useEffect } from "react";
-import { GeoJSON, MapContainer, Marker, useMap } from "react-leaflet";
+import { GeoJSON, MapContainer, Marker, ZoomControl, useMap } from "react-leaflet";
 import type { Feature, GeoJsonObject } from "geojson";
 import { activeState, regionColorVar, type RegionKey } from "@/data/state-config";
 import type { Site } from "@/data/sites";
