@@ -1,8 +1,10 @@
 @import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
+@import "leaflet/dist/leaflet.css";
 
 @custom-variant dark (&:is(.dark *));
+
 
 /*
  * Design system definition.
@@ -142,3 +144,103 @@
     color: var(--color-foreground);
   }
 }
+
+/* ===== Heritage Maharashtra design system ===== */
+:root {
+  --radius: 0.875rem;
+
+  /* warm parchment base */
+  --background: oklch(0.973 0.014 84);
+  --foreground: oklch(0.245 0.045 40);
+  --card: oklch(0.988 0.008 88);
+  --card-foreground: oklch(0.245 0.045 40);
+  --popover: oklch(0.988 0.008 88);
+  --popover-foreground: oklch(0.245 0.045 40);
+
+  /* terracotta */
+  --primary: oklch(0.545 0.152 38);
+  --primary-foreground: oklch(0.98 0.012 85);
+  /* deep maroon */
+  --secondary: oklch(0.34 0.115 22);
+  --secondary-foreground: oklch(0.97 0.014 85);
+  /* gold */
+  --accent: oklch(0.79 0.135 78);
+  --accent-foreground: oklch(0.26 0.07 40);
+
+  --muted: oklch(0.938 0.019 84);
+  --muted-foreground: oklch(0.49 0.036 55);
+  --destructive: oklch(0.53 0.19 27);
+  --destructive-foreground: oklch(0.98 0.01 85);
+  --border: oklch(0.885 0.026 78);
+  --input: oklch(0.885 0.026 78);
+  --ring: oklch(0.545 0.152 38);
+
+  /* map canvas, matching the reference plate */
+  --map-canvas: oklch(0.9 0.005 250);
+  --map-band: oklch(0.52 0.055 250);
+  --map-stroke: oklch(0.99 0 0);
+
+  /* district region colours from the reference map */
+  --region-konkan: oklch(0.79 0.075 168);
+  --region-nashik: oklch(0.75 0.095 235);
+  --region-pune: oklch(0.55 0.115 275);
+  --region-marathwada: oklch(0.81 0.115 88);
+  --region-amravati: oklch(0.63 0.145 48);
+  --region-nagpur: oklch(0.58 0.175 340);
+
+  --shadow-card: 0 24px 60px -28px oklch(0.34 0.115 22 / 0.42);
+  --shadow-soft: 0 10px 30px -18px oklch(0.34 0.115 22 / 0.35);
+  --gradient-heritage: linear-gradient(135deg, var(--secondary), var(--primary) 60%, var(--accent));
+  --font-display: "Marcellus", ui-serif, Georgia, serif;
+  --font-body: "Karla", ui-sans-serif, system-ui, sans-serif;
+}
+
+@theme inline {
+  --color-map-canvas: var(--map-canvas);
+  --color-map-band: var(--map-band);
+  --color-region-konkan: var(--region-konkan);
+  --color-region-nashik: var(--region-nashik);
+  --color-region-pune: var(--region-pune);
+  --color-region-marathwada: var(--region-marathwada);
+  --color-region-amravati: var(--region-amravati);
+  --color-region-nagpur: var(--region-nagpur);
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+  --shadow-card: var(--shadow-card);
+  --shadow-soft: var(--shadow-soft);
+}
+
+@layer base {
+  body {
+    font-family: var(--font-body);
+  }
+  h1, h2, h3, h4, .font-display {
+    font-family: var(--font-display);
+    letter-spacing: 0.01em;
+  }
+}
+
+@utility heritage-gradient {
+  background-image: var(--gradient-heritage);
+}
+
+/* Leaflet chrome tuned to the design system */
+.leaflet-container {
+  background: var(--map-canvas);
+  font-family: var(--font-body);
+}
+.leaflet-container .leaflet-control-zoom a {
+  background: var(--card);
+  color: var(--foreground);
+  border-color: var(--border);
+}
+.leaflet-tooltip.district-tip {
+  background: var(--card);
+  color: var(--foreground);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  box-shadow: var(--shadow-soft);
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+.leaflet-tooltip.district-tip::before { display: none; }
