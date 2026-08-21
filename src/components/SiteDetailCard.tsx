@@ -73,21 +73,23 @@ export function SiteDetailCard({ site, onClose }: { site: Site; onClose: () => v
         className="flex max-h-[92vh] w-full max-w-3xl flex-col overflow-hidden rounded-t-3xl bg-card shadow-card sm:rounded-3xl"
       >
         {/* header images */}
-        <div className="relative h-44 shrink-0 sm:h-56">
-          <div className="grid h-full grid-cols-3 gap-0.5">
+        <div className="relative h-44 shrink-0 overflow-hidden sm:h-56">
+          <div className={`grid h-full gap-0.5 ${site.images.length > 1 ? "grid-cols-3" : ""}`}>
             <img
               src={site.images[0]}
               alt={site.name}
-              className="col-span-2 h-full w-full object-cover"
-              loading="lazy"
+              className={`h-full w-full object-cover ${site.images.length > 1 ? "col-span-2" : ""}`}
             />
-            <img
-              src={site.images[1] ?? site.images[0]}
-              alt={`${site.name} detail`}
-              className="h-full w-full object-cover"
-              loading="lazy"
-            />
+            {site.images[1] ? (
+              <img
+                src={site.images[1]}
+                alt={`${site.name} detail`}
+                className="h-full w-full object-cover"
+                loading="lazy"
+              />
+            ) : null}
           </div>
+
           <button
             onClick={onClose}
             className="absolute right-3 top-3 flex size-9 items-center justify-center rounded-full bg-card/90 text-foreground shadow-soft"
