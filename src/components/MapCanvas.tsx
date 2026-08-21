@@ -63,7 +63,7 @@ export default function MapCanvas({
       minZoom={6}
       maxZoom={12}
       scrollWheelZoom
-      zoomControl
+      zoomControl={false}
       attributionControl={false}
       style={{ height: "100%", width: "100%" }}
     >
